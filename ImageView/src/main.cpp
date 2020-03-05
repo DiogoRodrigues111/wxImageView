@@ -1,5 +1,9 @@
 #include "../include/vw.h"
 
+BEGIN_EVENT_TABLE(MainPanel, wxPanel)
+    EVT_PAINT(MainPanel::PaintEvent)
+END_EVENT_TABLE()
+
 MainFrame::MainFrame(const wxString title)
 : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(800,600))
 {
@@ -45,6 +49,26 @@ bool MainFrame::IsDisplayImage(bool t) {
     return false;
 }
 
+MainPanel::MainPanel(wxFrame *parent, wxString file, wxBitmapType format)
+    : wxPanel(parent)
+{
+    bitmap.LoadFile(file, format);
+}
+
+void MainPanel::PaintEvent(wxPaintEvent & evt) {
+    wxPaintDC dc(this);
+    Render(dc);
+}
+
+void MainPanel::PaintNow() {
+    wxClientDC dc(this);
+    Render(dc);
+}
+
+void MainPanel::Render(wxDC & dc) {
+    dc.DrawBitmap(bitmap, 0, 0, false);
+}
+
 void MainFrame::OnOpenDialog(wxCommandEvent& event) {
     file_dialog = new wxFileDialog(this);
 
@@ -53,13 +77,13 @@ void MainFrame::OnOpenDialog(wxCommandEvent& event) {
     auto getPath = file_dialog->GetPath();
 
     switch(hResult) {
-        case wxID_OK:
-            IsDisplayImage(true);
+        case wxID_CANCEL:
+            
+            return;
         break;
 
-        case wxID_CANCEL:
-            IsDisplayImage(false);
-            return;
+        case wxID_OK:
+            MainPanel *im = new MainPanel(this, getPath, wxBITMAP_TYPE_JPEG);
         break;
     }
 }
