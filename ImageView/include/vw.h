@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/image.h>
 
 #define ID_MENU_DIALOG      1
 
@@ -18,6 +19,23 @@ class MainFrame : public wxFrame {
         wxMenu *menu;
         wxMenuItem *menu_open;
         wxMenuBar *menu_bar;
+        wxPanel *panel;
+        //wxImagePanel *panelImage;
+};
+
+class MainPanel : wxPanel {
+    public:
+        MainPanel(wxFrame *parent, wxString file, wxBitmapType format);
+
+    public: 
+        wxBitmap bitmap;
+
+        void PaintEvent(wxPaintEvent & evt);
+        void PaintNow();
+        
+        void Render(wxDC & dc);
+
+    DECLARE_EVENT_TABLE()
 };
 
 class MainApp : public wxApp {
